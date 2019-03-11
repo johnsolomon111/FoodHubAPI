@@ -2,14 +2,14 @@ from api import db
 from werkzeug.security import generate_password_hash
 
 class Customer(db.Model):
-	__table__='customer'
-	customer_id = db.Column(db.Integer, primary_key=True)
-	username = db.Column(db.String(30), nullable=False, unique=True)
-	password = db.Column(db.String(80), nullable=False)
-	firstname = db.Column(db.String(50), nullable=False)
-	lastname = db.Column(db.String(50), nullable=False)
-	contact_number = db.Column(db.String(11))
-	gender = db.Column(db.String(6), nullable=False)
+	__tablename__='customer'
+	customer_id = db.Column('customer_id', db.Integer, primary_key=True)
+	username = db.Column('username', db.String(30), nullable=False, unique=True)
+	password = db.Column('password', db.String(80), nullable=False)
+	firstname = db.Column('firstname', db.String(50), nullable=False)
+	lastname = db.Column('lastname', db.String(50), nullable=False)
+	contact_number = db.Column('contact_number', db.String(11))
+	gender = db.Column('gender', db.String(6), nullable=False)
 
 	def __init__(self, username='', password='', firstname='', lastname='', contact_number='', gender=''):
 		self.username = username
@@ -22,13 +22,13 @@ class Customer(db.Model):
 # FOREIGN KEY RESTAUANT TO OWNER (1 TO MANY)---------- (DONE) --------------
 class Owner(db.Model):
 	__table__='owner'
-	owner_id = db.Column(db.Integer, primary_key=True)
-	username = db.Column(db.String(30), nullable=False, unique=True)
-	password = db.Column(db.String(80), nullable=False)
-	firstname = db.Column(db.String(50), nullable=False)
-	lastname = db.Column(db.String(50), nullable=False)
-	contact_number = db.Column(db.String(11))
-	gender = db.Column(db.String(6), nullable=False)
+	owner_id = db.Column('owner_id', db.Integer, primary_key=True)
+	username = db.Column('username',db.String(30), nullable=False, unique=True)
+	password = db.Column('password', db.String(80), nullable=False)
+	firstname = db.Column('firstname', db.String(50), nullable=False)
+	lastname = db.Column('lastname', db.String(50), nullable=False)
+	contact_number = db.Column('contact_number', db.String(11))
+	gender = db.Column('gender', db.String(6), nullable=False)
 	
 	def __init__(self, username='', password='', firstname='', lastname='', contact_number='', gender=''):
 		self.username = username

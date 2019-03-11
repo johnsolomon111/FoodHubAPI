@@ -1,5 +1,6 @@
 from api import db
 from werkzeug.security import generate_password_hash
+from flask_login import UserMixin
 
 class Customer(UserMixin, db.Model):
 	__table__='customer'

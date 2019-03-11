@@ -1,8 +1,7 @@
 from api import db
 from werkzeug.security import generate_password_hash
-from flask_login import UserMixin
 
-class Customer(UserMixin, db.Model):
+class Customer(db.Model):
 	__table__='customer'
 	customer_id = db.Column(db.Integer, primary_key=True)
 	username = db.Column(db.String(30), nullable=False, unique=True)
@@ -22,7 +21,7 @@ class Customer(UserMixin, db.Model):
 		self.gender = gender
 
 # FOREIGN KEY RESTAUANT TO OWNER (1 TO MANY)---------- (DONE) --------------
-class Owner(UserMixin, db.Model):
+class Owner(db.Model):
 	__table__='owner'
 	owner_id = db.Column(db.Integer, primary_key=True)
 	username = db.Column(db.String(30), nullable=False, unique=True)

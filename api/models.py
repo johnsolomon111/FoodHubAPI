@@ -10,7 +10,7 @@ class Customer(db.Model):
 	lastname = db.Column(db.String(50), nullable=False)
 	contact_number = db.Column(db.String(11))
 	gender = db.Column(db.String(6), nullable=False)
-	
+
 	def __init__(self, username='', password='', firstname='', lastname='', contact_number='', gender=''):
 		self.username = username
 		self.password = generate_password_hash(password, method='sha256')
@@ -29,7 +29,7 @@ class Owner(db.Model):
 	lastname = db.Column(db.String(50), nullable=False)
 	contact_number = db.Column(db.String(11))
 	gender = db.Column(db.String(6), nullable=False)
-
+	
 	def __init__(self, username='', password='', firstname='', lastname='', contact_number='', gender=''):
 		self.username = username
 		self.password = generate_password_hash(password, method='sha256')

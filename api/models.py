@@ -21,7 +21,7 @@ class Customer(db.Model):
 
 # FOREIGN KEY RESTAUANT TO OWNER (1 TO MANY)---------- (DONE) --------------
 class Owner(db.Model):
-	__table__='owner'
+	__tablename__='owner'
 	owner_id = db.Column('owner_id', db.Integer, primary_key=True)
 	username = db.Column('username',db.String(30), nullable=False, unique=True)
 	password = db.Column('password', db.String(80), nullable=False)

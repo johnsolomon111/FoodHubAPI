@@ -1,4 +1,4 @@
-from api import db, datetime
+from api import db
 from werkzeug.security import generate_password_hash
 
 class Customer(UserMixin, db.Model):

@@ -113,4 +113,3 @@ class Reviews(db.Model):
 		self.star_rating = star_rating
 		self.reviews_date = reviews_date
 		
-db.create_all()

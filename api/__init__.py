@@ -12,3 +12,5 @@ server.secret_key = os.urandom(24)
 
 from models import *
 from app import *
+
+db.create_all()

@@ -1,4 +1,4 @@
-from api import server
+from api import *
 import os
 
 if __name__ == '__main__':

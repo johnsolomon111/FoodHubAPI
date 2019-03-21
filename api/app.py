@@ -80,7 +80,7 @@ def get_one_customer(username):
 	if not customer:
 		return jsonify({'messege' : 'No customer found!'})
 	customer_data = {}
-	customer_data['owner_id'] = customer.owner_id
+	customer_data['customer_id'] = customer.customer_id
 	customer_data['username'] = customer.username
 	customer_data['password'] = customer.password
 	customer_data['firstname'] = customer.firstname

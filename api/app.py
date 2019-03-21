@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-from api import server, jsonify, generate_password_hash, check_password_hash, request
-=======
 from api import server, jsonify, request, generate_password_hash, check_password_hash, make_response
->>>>>>> origin/login-CrUD
 from models import *
 import jwt
 import datetime
@@ -26,7 +22,6 @@ def token_required(f):
 
 @server.route('/', methods=['GET'])
 def index():
-<<<<<<< HEAD
     return jsonify({"messege" : "Deployed"})
 
 @server.route('/owner', methods=['POST'])
@@ -113,8 +108,8 @@ def get_one_customer(username):
 	customer_data['gender'] = customer.gender	
 	
 	return jsonify({'customer' : customer_data})
-=======
-    return 'Deployed!'
+
+	#================================================
 
 @server.route('/login')
 def login():
@@ -182,6 +177,3 @@ def delete_restaurant(current_user,restaurant_id):
     db.session.delete(restaurant)
     db.session.commit()
     return jsonify({'message':'Restaurant deleted!'})
-
- 
->>>>>>> origin/login-CrUD

@@ -4,6 +4,6 @@ from models import *
 
 @server.route('/', methods=['GET'])
 def index():
-    return {"messege" : "Deployed"}
+    return jsonify("messege", "Deployed")
 
 

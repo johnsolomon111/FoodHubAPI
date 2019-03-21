@@ -37,36 +37,6 @@ def login():
         return jsonify({'token' : token.decode('UTF-8')})
     return make_response('Could not verify!', 401, {'WWW-Authenticate':'Basic realm = "Login required"'})
 
-
-# @server.route('/owner', methods=['POST'])
-# def create_owner():
-#     data = request.get_json()
-#     owner = Owner(username = data['username'],
-#                 password = data['password'],
-#                 firstname = data['firstname'],
-#                 lastname = data['lastname'],
-#                 contact_number= data['contact_number'],
-#                 gender = data['gender'])
-#     db.session.add(owner)
-#     db.session.commit()
-#     return jsonify({'mesage': 'Account created!'})
-
-# @server.route('/owners', methods=['GET'])
-# def owners():
-#     owner = Owner.query.all()
-#     result = []
-#     for info in owner:
-#         info_data = {}
-#         info_data['owner_id'] = info.owner_id
-#         info_data['username'] = info.username
-#         info_data['password'] = info.password
-#         info_data['firstname'] = info.firstname
-#         info_data['lastname'] = info.lastname
-#         info_data['contact_number'] = info.contact_number
-#         info_data['gender'] = info.gender
-#         result.append(info_data)
-#     return jsonify({'Owners': result })
-
 @server.route('/restaurants', methods=['GET'])
 @token_required
 def restaurants(current_user):

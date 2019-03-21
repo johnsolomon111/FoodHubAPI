@@ -88,4 +88,4 @@ def get_one_customer(username):
 	customer_data['contact_number'] = customer.contact_number
 	customer_data['gender'] = customer.gender	
 	
-	return jsonify({'owner' : customer_data})
+	return jsonify({'customer' : customer_data})

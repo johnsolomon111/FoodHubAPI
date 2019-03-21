@@ -52,4 +52,4 @@ class Restaurant(db.Model):
 		self.bio = bio
 		self.locations = locations
 
-db.create_all()
+# db.create_all()

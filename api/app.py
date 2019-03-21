@@ -78,7 +78,7 @@ def get_one_customer(username):
 	customer = Customer.query.filter_by(username=username).first()
 	
 	if not customer:
-		return jsonify({'messege' : 'No owner found!'})
+		return jsonify({'messege' : 'No customer found!'})
 	customer_data = {}
 	customer_data['owner_id'] = customer.owner_id
 	customer_data['username'] = customer.username

@@ -22,7 +22,7 @@ def token_required(f):
 
 @server.route('/', methods=['GET'])
 def index():
-    return jsonify({"messege" : "Deployed"})
+    return jsonify({"message" : "Deployed"})
 
 @server.route('/owner/register', methods=['POST'])
 def register_owner():
@@ -43,9 +43,9 @@ def register_owner():
 					gender=gender)
 		db.session.add(new_user)
 		db.session.commit()
-		return jsonify({'messege' : 'New owner created'})
+		return jsonify({'message' : 'New owner created'})
 	else:
-		return jsonify({'messege' : 'Owner already exist!'})
+		return jsonify({'message' : 'Owner already exist!'})
 
 @server.route('/owner', methods=['GET'])
 def get_owner():
@@ -70,7 +70,7 @@ def get_one_owner():
 	owner = Owner.query.filter_by(username=username).first()
 	
 	if not owner:
-		return jsonify({'messege' : 'No owner found!'})
+		return jsonify({'message' : 'No owner found!'})
 	owner_data = {}
 	owner_data['owner_id'] = owner.owner_id
 	owner_data['username'] = owner.username
@@ -82,7 +82,7 @@ def get_one_owner():
 	
 	return jsonify({'owner' : owner_data})
 
-@server.route('/customer', methods=['POST'])
+@server.route('/customer/register', methods=['POST'])
 def register_customer():
 	username = request.args['username']
 	password = request.args['password']
@@ -104,12 +104,12 @@ def register_customer():
 	else:
 		return jsonify({'messege' : 'Customer already exist!'})
 
-@server.route('/customer/<username>', methods=['GET'])
-def get_one_customer(username):
+@server.route('/customer/', methods=['GET'])
+def get_one_customer():
 	customer = Customer.query.filter_by(username=username).first()
 	
 	if not customer:
-		return jsonify({'messege' : 'No customer found!'})
+		return jsonify({'message' : 'No customer found!'})
 	customer_data = {}
 	customer_data['customer_id'] = customer.customer_id
 	customer_data['username'] = customer.username
@@ -198,9 +198,9 @@ def update_customer(current_user, username):
 					gender=data['gender'])
 		db.session.add(update_user)
 		db.session.commit()
-		return jsonify({'messege' : 'New customer created'})
+		return jsonify({'message' : 'New customer created'})
 	else:
-		return jsonify({'messege' : 'Username already exist!'})
+		return jsonify({'message' : 'Username already exist!'})
 
 
 @server.route('/restaurant/<restaurant_id>', methods=['DELETE'])

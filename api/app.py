@@ -24,17 +24,23 @@ def token_required(f):
 def index():
     return jsonify({"messege" : "Deployed"})
 
-@server.route('/owner', methods=['POST'])
+@server.route('/owner/register', methods=['POST'])
 def register_owner():
-	data = request.get_json()
-	exist = Owner.query.filter_by(username = data['username']).first()
+	username = request.args['username']
+	password = request.args['password']
+	firstname = request.args['firstname']
+	lastname = request.args['lastname']
+	contact_number = request.args['contact_number']
+	gender = request.args['gender']
+
+	exist = Owner.query.filter_by(username = username).first()
 	if not exist: 
-		new_user = Owner(username=data['username'],
-					password=data['password'], 
-					firstname=data['firstname'], 
-					lastname=data['lastname'], 
-					contact_number=data['contact_number'], 
-					gender=data['gender'])
+		new_user = Owner(username=username,
+					password=password, 
+					firstname=firstname, 
+					lastname=lastname, 
+					contact_number=contact_number, 
+					gender=gender)
 		db.session.add(new_user)
 		db.session.commit()
 		return jsonify({'messege' : 'New owner created'})
@@ -124,6 +130,7 @@ def login():
         return jsonify({'token' : token.decode('UTF-8')})
     return make_response('Could not verify!', 401, {'WWW-Authenticate':'Basic realm = "Login required"'})
 
+
 @server.route('/restaurants', methods=['GET'])
 @token_required
 def restaurants(current_user):
@@ -146,10 +153,12 @@ def restaurant():
 @token_required
 def add_restaurant(current_user):
     data = request.get_json()
+    res_owner_id = Owner.query.filter_by(username= current_user)
     restaurant = Restaurant(restaurant_name = data['restaurant_name'], 
                             restaurant_bio = data['restaurant_bio'],
                             restaurant_type = data['restaurant_type'],
-                            location = data['location'])
+                            location = data['location'],
+                            restaurant_owner_id = res_owner_id.owner_id)
     db.session.add(restaurant)
     db.session.commit()
     return jsonify({'message':'Restaurant added successfully!'})
@@ -167,6 +176,26 @@ def update_restaurant(current_user,restaurant_id):
     updated_restaurant.location = data['location']
     db.session.commit()
     return jsonify({'message': 'Restaurant updated!'})
+
+@server.route('/customer/<username>', methods=['PUT'])
+@token_required
+def update_customer(current_user, username):
+	data = request.get_json()
+	exist = Owner.query.filter_by(username = data['username']).first()
+	this_user = Owner.query.filter_by(username = current_user.username)
+	if not exist: 
+		update_user = Customer(username=data['username'],
+					password=data['password'], 
+					firstname=data['firstname'], 
+					lastname=data['lastname'], 
+					contact_number=data['contact_number'], 
+					gender=data['gender'])
+		db.session.add(update_user)
+		db.session.commit()
+		return jsonify({'messege' : 'New customer created'})
+	else:
+		return jsonify({'messege' : 'Username already exist!'})
+
 
 @server.route('/restaurant/<restaurant_id>', methods=['DELETE'])
 @token_required

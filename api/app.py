@@ -83,15 +83,20 @@ def get_one_owner(username):
 
 @server.route('/customer', methods=['POST'])
 def register_customer():
-	data = request.get_json()
-	exist = Customer.query.filter_by(username = data['username']).first()
+	username = request.args['username']
+	password = request.args['password']
+	firstname = request.args['firstname']
+	lastname = request.args['lastname']
+	contact_number = request.args['contact_number']
+	gender = request.args['gender']
+	exist = Customer.query.filter_by(username =username).first()
 	if not exist: 
-		new_user = Customer(username=data['username'],
-					password=data['password'], 
-					firstname=data['firstname'], 
-					lastname=data['lastname'], 
-					contact_number=data['contact_number'], 
-					gender=data['gender'])
+		new_user = Customer(username=username,
+					password=password, 
+					firstname=firstname, 
+					lastname=lastname, 
+					contact_number=contact_number, 
+					gender=gender)
 		db.session.add(new_user)
 		db.session.commit()
 		return jsonify({'messege' : 'New customer created'})

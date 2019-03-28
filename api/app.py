@@ -64,8 +64,9 @@ def get_owner():
 		results.append(owner_data)
 	return jsonify({'Owners': results})
 
-@server.route('/owner/<username>', methods=['GET'])
-def get_one_owner(username):
+@server.route('/owner/', methods=['GET'])
+def get_one_owner():
+	username = request.args['username']
 	owner = Owner.query.filter_by(username=username).first()
 	
 	if not owner:

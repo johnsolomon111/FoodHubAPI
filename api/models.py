@@ -48,4 +48,4 @@ class Restaurant(db.Model):
 		self.restaurant_type = restaurant_type
 		self.location = location
 
-db.create_all()
+# db.create_all()

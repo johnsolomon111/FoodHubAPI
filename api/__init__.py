@@ -9,9 +9,10 @@ server = Flask(__name__)
 
 db = SQLAlchemy(server)
 
-server.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
+# server.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
+server.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 server.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 server.secret_key = 'thisissecret'
 
-from models import *
-from app import *
+from api.models import *
+from api.app import *

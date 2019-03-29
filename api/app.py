@@ -1,5 +1,5 @@
 from api import server, jsonify, request, generate_password_hash, check_password_hash, make_response
-from models import *
+from api.models import *
 import jwt
 import datetime
 from functools import wraps
@@ -17,22 +17,6 @@ def token_required(f):
 			return jsonify({'message': 'Token is invalid.'}), 403
 		return f(*args, **kwargs)
 	return decorated
-
-# def token_required(f):
-# 	@wraps(f)
-# 	def decorated(*args, **kwargs):
-# 		token = None
-# 		if 'x-access-token' in request.headers:
-# 			token = request.headers['x-access-token']
-# 		if not token:
-# 			return jsonify({'message':'Token is missing'}), 401
-# 		try:
-# 			data = jwt.decode(token, server.config['SECRET_KEY'])
-# 			current_user = Owner.query.filter_by(username=data['username']).first()
-# 		except:
-# 			return jsonify({'message':'Token is invalid'}), 401	
-# 		return f(current_user, *args, **kwargs)
-# 	return decorated 
 
 @server.route('/', methods=['GET'])
 def index():
@@ -78,13 +62,12 @@ def get_owner():
 		results.append(owner_data)
 	return jsonify({'Owners': results})
 
-@server.route('/owner/', methods=['GET'])
-def get_one_owner():
-	username = request.args['username']
+@server.route('/owner/<username>', methods=['GET'])
+def get_one_owner(username):
 	owner = Owner.query.filter_by(username=username).first()
 
 	if not owner:
-		return jsonify({'message' : 'No owner found!'})
+		return jsonify({'messege' : 'No owner found!'})
 	owner_data = {}
 	owner_data['owner_id'] = owner.owner_id
 	owner_data['username'] = owner.username
@@ -118,8 +101,8 @@ def register_customer():
 	else:
 		return jsonify({'message' : 'Customer already exist!'})
 
-@server.route('/customer/', methods=['GET'])
-def get_one_customer():
+@server.route('/customer/<username>', methods=['GET'])
+def get_one_customer(username):
 	customer = Customer.query.filter_by(username=username).first()
 	if not customer:
 		return jsonify({'message' : 'No customer found!'})
@@ -134,14 +117,17 @@ def get_one_customer():
 	
 	return jsonify({'customer' : customer_data})
 
-
 @server.route('/login')
 def login():
 	auth = request.authorization
 	owner = Owner.query.filter_by(username=auth.username).first()
 	if not owner:
-		return jsonify({'mesage':'Could not verify.'})
-
+		return jsonify({'message':'Owner not found!'})
+	if auth and auth.password == 'password':
+		token = jwt.encode({'user': auth.username, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, server.config['SECRET_KEY'])
+		return jsonify({'token': token.decode('UTF-8')})
+	return make_response('Could not verify!', 401, {'WWW-Authenticate': 'Basic realm="Login required"'})
+	
 @server.route('/restaurants', methods=['GET'])
 @token_required
 def restaurants():

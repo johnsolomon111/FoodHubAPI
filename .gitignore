@@ -1,4 +1,4 @@
-*__pycache__
 *.pyc
-*.vscode
-*database.db
+.vscode
+database.db 
+__pycache__

@@ -12,9 +12,9 @@ db = SQLAlchemy(server)
 server.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
 # server.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 server.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-server.config['SECRET_KEY'] = 'thisisasecretkey'
-# server.secret_key = os.urandom(24)	
+# server.config['SECRET_KEY'] = 'thisisasecretkey'
+server.secret_key = os.urandom(24)	
 server.debug = True
 
-from api.models import *
-from api.app import *
+from models import *
+from app import *

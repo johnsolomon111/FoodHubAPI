@@ -1,5 +1,5 @@
 from api import server, jsonify, request, generate_password_hash, check_password_hash, make_response
-from api.models import *
+from models import *
 import jwt
 import datetime
 from functools import wraps

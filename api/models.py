@@ -52,8 +52,5 @@ class Restaurant(db.Model):
 		self.bio = bio
 		self.locations = locations
 
-<<<<<<< HEAD
 #db.create_all()
-=======
-# db.create_all()
->>>>>>> login-CrUD
+

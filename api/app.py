@@ -1,33 +1,42 @@
-<<<<<<< HEAD
-from api import server, jsonify, generate_password_hash, check_password_hash, request
-=======
 from api import server, jsonify, request, generate_password_hash, check_password_hash, make_response
->>>>>>> origin/login-CrUD
-from models import *
+from api.models import *
 import jwt
 import datetime
 from functools import wraps
 
+
 def token_required(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        token = None
-        if 'x-access-token' in request.headers:
-            token = request.headers['x-access-token']
-        if not token:
-            return jsonify({'message':'Token is missing!'}), 401
-        try: 
-            data = jwt.decode(token, server.secret_key)
-            current_user = Owner.query.filter_by(username = data['username']).first()
-        except:
-            return jsonify({'message':'Token is invalid!'}), 401
-        return f(current_user, *args, **kwargs)
-    return decorated
+	@wraps(f)
+	def decorated(*args, **kwargs):
+		token = request.args.get('token') #http://127.0.0.1:5000/route?token=asdfasdlasidfkasldfj
+		if not token:
+			return jsonify({'message': 'Token is missing'}), 403
+		try:
+			data = jwt.decode(token, server.config['SECRET_KEY'])
+		except:
+			return jsonify({'message': 'Token is invalid.'}), 403
+		return f(*args, **kwargs)
+	return decorated
+
+# def token_required(f):
+# 	@wraps(f)
+# 	def decorated(*args, **kwargs):
+# 		token = None
+# 		if 'x-access-token' in request.headers:
+# 			token = request.headers['x-access-token']
+# 		if not token:
+# 			return jsonify({'message':'Token is missing'}), 401
+# 		try:
+# 			data = jwt.decode(token, server.config['SECRET_KEY'])
+# 			current_user = Owner.query.filter_by(username=data['username']).first()
+# 		except:
+# 			return jsonify({'message':'Token is invalid'}), 401	
+# 		return f(current_user, *args, **kwargs)
+# 	return decorated 
 
 @server.route('/', methods=['GET'])
 def index():
-<<<<<<< HEAD
-    return jsonify({"messege" : "Deployed"})
+    return jsonify({"message" : "Deployed"})
 
 @server.route('/owner', methods=['POST'])
 def register_owner():
@@ -42,9 +51,9 @@ def register_owner():
 					gender=data['gender'])
 		db.session.add(new_user)
 		db.session.commit()
-		return jsonify({'messege' : 'New owner created'})
+		return jsonify({'message' : 'New owner created'})
 	else:
-		return jsonify({'messege' : 'Owner already exist!'})
+		return jsonify({'message' : 'Owner already exist!'})
 
 @server.route('/owner', methods=['GET'])
 def get_owner():
@@ -66,7 +75,7 @@ def get_owner():
 @server.route('/owner/<username>', methods=['GET'])
 def get_one_owner(username):
 	owner = Owner.query.filter_by(username=username).first()
-	
+
 	if not owner:
 		return jsonify({'messege' : 'No owner found!'})
 	owner_data = {}
@@ -93,16 +102,15 @@ def register_customer():
 					gender=data['gender'])
 		db.session.add(new_user)
 		db.session.commit()
-		return jsonify({'messege' : 'New customer created'})
+		return jsonify({'message' : 'New customer created'})
 	else:
-		return jsonify({'messege' : 'Customer already exist!'})
+		return jsonify({'message' : 'Customer already exist!'})
 
 @server.route('/customer/<username>', methods=['GET'])
 def get_one_customer(username):
 	customer = Customer.query.filter_by(username=username).first()
-	
 	if not customer:
-		return jsonify({'messege' : 'No customer found!'})
+		return jsonify({'message' : 'No customer found!'})
 	customer_data = {}
 	customer_data['customer_id'] = customer.customer_id
 	customer_data['username'] = customer.username
@@ -113,25 +121,33 @@ def get_one_customer(username):
 	customer_data['gender'] = customer.gender	
 	
 	return jsonify({'customer' : customer_data})
-=======
-    return 'Deployed!'
 
 @server.route('/login')
 def login():
-    auth = request.authorization
-    if not auth or not auth.username or not auth.password:
-        return make_response('Could not verify!', 401, {'WWW-Authenticate':'Basic realm = "Login required"'})
-    user = Owner.query.filter_by(username=auth.username).first()
-    if not user:
-        return make_response('Could not verify!', 401, {'WWW-Authenticate':'Basic realm = "Login required"'})
-    if check_password_hash(user.password, auth.password):
-        token = jwt.encode({'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, server.secret_key)
-        return jsonify({'token' : token.decode('UTF-8')})
-    return make_response('Could not verify!', 401, {'WWW-Authenticate':'Basic realm = "Login required"'})
+	auth = request.authorization
+	owner = Owner.query.filter_by(username=auth.username).first()
+	if not owner:
+		return jsonify({'mesage':'Could not verify.'})
 
+	if auth and auth.password == 'password':
+		token = jwt.encode({'user': auth.username, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, server.config['SECRET_KEY'])
+		return jsonify({'token': token.decode('UTF-8')})
+	return jsonify({'mesage':'Could not verify.'})
+
+# @server.route('/login')
+# def login():
+# 	auth = request.authorization
+# 	owner = Owner.query.filter_by(username=auth.username).first()
+# 	if not owner:
+# 		return make_response('Could not verify', 401, {'WWW-Authenticate':'Basic realm="Login required"'})
+# 	if check_password_hash(owner.password, auth.password):
+# 		token = jwt.encode({'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, server.config['SECRET_KEY'])
+# 		return jsonify({'token': token.decode('UTF-8')})
+# 	return make_response('Could not verify', 401, {'WWW-Authenticate':'Basic realm="Login required"'})
+	
 @server.route('/restaurants', methods=['GET'])
 @token_required
-def restaurants(current_user):
+def restaurants():
     restaurants = Restaurant.query.all()
     result = []
     for info in restaurants:
@@ -148,8 +164,7 @@ def restaurant():
     return ''
 
 @server.route('/restaurant', methods=['POST'])
-@token_required
-def add_restaurant(current_user):
+def add_restaurant():
     data = request.get_json()
     restaurant = Restaurant(restaurant_name = data['restaurant_name'], 
                             restaurant_bio = data['restaurant_bio'],
@@ -160,8 +175,7 @@ def add_restaurant(current_user):
     return jsonify({'message':'Restaurant added successfully!'})
 
 @server.route('/restaurant/<restaurant_id>', methods=['PUT'])
-@token_required
-def update_restaurant(current_user,restaurant_id):
+def update_restaurant(restaurant_id):
     data = request.get_json()
     updated_restaurant = Restaurant.query.filter_by(restaurant_id=restaurant_id).first()
     if not restaurant:
@@ -174,14 +188,10 @@ def update_restaurant(current_user,restaurant_id):
     return jsonify({'message': 'Restaurant updated!'})
 
 @server.route('/restaurant/<restaurant_id>', methods=['DELETE'])
-@token_required
-def delete_restaurant(current_user,restaurant_id):
+def delete_restaurant(restaurant_id):
     restaurant = Restaurant.query.filter_by(restaurant_id=restaurant_id).first()
     if not restaurant:
         return jsonify({'message': 'No restaurant found.'})
     db.session.delete(restaurant)
     db.session.commit()
     return jsonify({'message':'Restaurant deleted!'})
-
- 
->>>>>>> origin/login-CrUD

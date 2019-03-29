@@ -9,8 +9,8 @@ server = Flask(__name__)
 
 db = SQLAlchemy(server)
 
-# server.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
-server.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+server.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
+# server.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 server.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 server.config['SECRET_KEY'] = 'thisisasecretkey'
 # server.secret_key = os.urandom(24)	

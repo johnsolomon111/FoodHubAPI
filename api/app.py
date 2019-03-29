@@ -1,5 +1,5 @@
 from api import server, jsonify, request, generate_password_hash, check_password_hash, make_response
-from api.models import *
+from models import *
 import jwt
 import datetime
 from functools import wraps
@@ -38,17 +38,23 @@ def token_required(f):
 def index():
     return jsonify({"message" : "Deployed"})
 
-@server.route('/owner', methods=['POST'])
+@server.route('/owner/register', methods=['POST'])
 def register_owner():
-	data = request.get_json()
-	exist = Owner.query.filter_by(username = data['username']).first()
+	username = request.args['username']
+	password = request.args['password']
+	firstname = request.args['firstname']
+	lastname = request.args['lastname']
+	contact_number = request.args['contact_number']
+	gender = request.args['gender']
+
+	exist = Owner.query.filter_by(username = username).first()
 	if not exist: 
-		new_user = Owner(username=data['username'],
-					password=data['password'], 
-					firstname=data['firstname'], 
-					lastname=data['lastname'], 
-					contact_number=data['contact_number'], 
-					gender=data['gender'])
+		new_user = Owner(username=username,
+					password=password, 
+					firstname=firstname, 
+					lastname=lastname, 
+					contact_number=contact_number, 
+					gender=gender)
 		db.session.add(new_user)
 		db.session.commit()
 		return jsonify({'message' : 'New owner created'})
@@ -72,12 +78,13 @@ def get_owner():
 		results.append(owner_data)
 	return jsonify({'Owners': results})
 
-@server.route('/owner/<username>', methods=['GET'])
-def get_one_owner(username):
+@server.route('/owner/', methods=['GET'])
+def get_one_owner():
+	username = request.args['username']
 	owner = Owner.query.filter_by(username=username).first()
 
 	if not owner:
-		return jsonify({'messege' : 'No owner found!'})
+		return jsonify({'message' : 'No owner found!'})
 	owner_data = {}
 	owner_data['owner_id'] = owner.owner_id
 	owner_data['username'] = owner.username
@@ -89,25 +96,30 @@ def get_one_owner(username):
 	
 	return jsonify({'owner' : owner_data})
 
-@server.route('/customer', methods=['POST'])
+@server.route('/customer/register', methods=['POST'])
 def register_customer():
-	data = request.get_json()
-	exist = Customer.query.filter_by(username = data['username']).first()
+	username = request.args['username']
+	password = request.args['password']
+	firstname = request.args['firstname']
+	lastname = request.args['lastname']
+	contact_number = request.args['contact_number']
+	gender = request.args['gender']
+	exist = Customer.query.filter_by(username =username).first()
 	if not exist: 
-		new_user = Customer(username=data['username'],
-					password=data['password'], 
-					firstname=data['firstname'], 
-					lastname=data['lastname'], 
-					contact_number=data['contact_number'], 
-					gender=data['gender'])
+		new_user = Customer(username=username,
+					password=password, 
+					firstname=firstname, 
+					lastname=lastname, 
+					contact_number=contact_number, 
+					gender=gender)
 		db.session.add(new_user)
 		db.session.commit()
 		return jsonify({'message' : 'New customer created'})
 	else:
 		return jsonify({'message' : 'Customer already exist!'})
 
-@server.route('/customer/<username>', methods=['GET'])
-def get_one_customer(username):
+@server.route('/customer/', methods=['GET'])
+def get_one_customer():
 	customer = Customer.query.filter_by(username=username).first()
 	if not customer:
 		return jsonify({'message' : 'No customer found!'})
@@ -122,6 +134,7 @@ def get_one_customer(username):
 	
 	return jsonify({'customer' : customer_data})
 
+
 @server.route('/login')
 def login():
 	auth = request.authorization
@@ -129,22 +142,6 @@ def login():
 	if not owner:
 		return jsonify({'mesage':'Could not verify.'})
 
-	if auth and auth.password == 'password':
-		token = jwt.encode({'user': auth.username, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, server.config['SECRET_KEY'])
-		return jsonify({'token': token.decode('UTF-8')})
-	return jsonify({'mesage':'Could not verify.'})
-
-# @server.route('/login')
-# def login():
-# 	auth = request.authorization
-# 	owner = Owner.query.filter_by(username=auth.username).first()
-# 	if not owner:
-# 		return make_response('Could not verify', 401, {'WWW-Authenticate':'Basic realm="Login required"'})
-# 	if check_password_hash(owner.password, auth.password):
-# 		token = jwt.encode({'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, server.config['SECRET_KEY'])
-# 		return jsonify({'token': token.decode('UTF-8')})
-# 	return make_response('Could not verify', 401, {'WWW-Authenticate':'Basic realm="Login required"'})
-	
 @server.route('/restaurants', methods=['GET'])
 @token_required
 def restaurants():
@@ -166,10 +163,12 @@ def restaurant():
 @server.route('/restaurant', methods=['POST'])
 def add_restaurant():
     data = request.get_json()
+    res_owner_id = Owner.query.filter_by(username= current_user)
     restaurant = Restaurant(restaurant_name = data['restaurant_name'], 
                             restaurant_bio = data['restaurant_bio'],
                             restaurant_type = data['restaurant_type'],
-                            location = data['location'])
+                            location = data['location'],
+                            restaurant_owner_id = res_owner_id.owner_id)
     db.session.add(restaurant)
     db.session.commit()
     return jsonify({'message':'Restaurant added successfully!'})
@@ -186,6 +185,26 @@ def update_restaurant(restaurant_id):
     updated_restaurant.location = data['location']
     db.session.commit()
     return jsonify({'message': 'Restaurant updated!'})
+
+@server.route('/customer/<username>', methods=['PUT'])
+@token_required
+def update_customer(current_user, username):
+	data = request.get_json()
+	exist = Owner.query.filter_by(username = data['username']).first()
+	this_user = Owner.query.filter_by(username = current_user.username)
+	if not exist: 
+		update_user = Customer(username=data['username'],
+					password=data['password'], 
+					firstname=data['firstname'], 
+					lastname=data['lastname'], 
+					contact_number=data['contact_number'], 
+					gender=data['gender'])
+		db.session.add(update_user)
+		db.session.commit()
+		return jsonify({'message' : 'New customer created'})
+	else:
+		return jsonify({'message' : 'Username already exist!'})
+
 
 @server.route('/restaurant/<restaurant_id>', methods=['DELETE'])
 def delete_restaurant(restaurant_id):

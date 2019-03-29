@@ -18,7 +18,6 @@ class Customer(db.Model):
 		self.lastname = lastname
 		self.contact_number = contact_number
 		self.gender = gender
-
 class Owner(db.Model):
 	__tablename__= 'owner'
 	owner_id = db.Column(db.Integer, primary_key=True)
@@ -29,7 +28,7 @@ class Owner(db.Model):
 	contact_number = db.Column(db.String(11))
 	gender = db.Column(db.String(6), nullable=False)
 	restaurants = db.relationship('Restaurant', backref='restaurant_owner')
-
+	
 	def __init__(self, username='', password='', firstname='', lastname='', contact_number='', gender=''):
 		self.username = username
 		self.password = generate_password_hash(password, method='sha256')
@@ -53,4 +52,4 @@ class Restaurant(db.Model):
 		self.bio = bio
 		self.locations = locations
 
-# db.create_all()
+#db.create_all()

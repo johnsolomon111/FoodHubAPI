@@ -9,7 +9,7 @@ Flask-SQLAlchemy==2.3.2
 functools32==3.2.3.post2
 idna==2.8
 itsdangerous==1.1.0
-Jinja2==2.10
+Jinja2==2.11.3
 jsonschema==3.0.1
 MarkupSafe==1.1.1
 psycopg2==2.7.7

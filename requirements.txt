@@ -13,7 +13,7 @@ Jinja2==2.10
 jsonschema==3.0.1
 MarkupSafe==1.1.1
 psycopg2==2.7.7
-PyJWT==1.7.1
+PyJWT==2.4.0
 pyrsistent==0.14.11
 pytz==2018.9
 requests==2.21.0
